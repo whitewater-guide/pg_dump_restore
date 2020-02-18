@@ -16,4 +16,4 @@ RUN apk update && \
 
 COPY backup.sh restore.sh run.sh ./
 
-ENTRYPOINT ["run.sh"]
+ENTRYPOINT ["/app/run.sh"]
