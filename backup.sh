@@ -16,11 +16,11 @@ rm -rf *.bak *.csv backup.tar
 echo "Creating dump of wwguide database..."
 pg_dump -h db -U postgres -Fc -f wwguide.bak wwguide
 
+echo "Creating dump of gorge database without data..."
+pg_dump -h db -U postgres -Fc --schema-only -fgorge_schema.bak gorge
+
 echo "Creating dump of gorge database..."
 pg_dump -h db -U postgres -Fc -f gorge.bak gorge
-
-echo "Creating dump of gorge database without data..."
-pg_dump -h db -U postgres -Fc -f --schema-only gorge_schema.bak gorge
 
 echo "Creating one-day measurements dump of gorge database..."
 psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp <= NOW() - INTERVAL '1 DAY') TO '/app/measurements.csv'"
