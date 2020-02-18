@@ -28,7 +28,7 @@ echo "Taring all backups together"
 tar cvf backup.tar *.bak *.csv
 
 echo "Uploading dump to $S3_BUCKET"
-cat backup.tar | aws --endpoint-url ${S3_ENDPOINT} s3 cp - s3://$S3_BUCKET/$S3_PREFIX/backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar || exit 2
+cat backup.tar | aws s3 cp - s3://$S3_BUCKET/$S3_PREFIX/backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar || exit 2
 echo "SQL backup uploaded successfully"
 
 echo "Deleting current backups"
