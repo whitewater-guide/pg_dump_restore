@@ -23,7 +23,7 @@ echo "Creating dump of gorge database..."
 pg_dump -h db -U postgres -Fc -f gorge.bak gorge
 
 echo "Creating one-day measurements dump of gorge database..."
-psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp <= NOW() - INTERVAL '1 DAY') TO '/app/measurements.csv'"
+psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp > NOW() - INTERVAL '1 DAY') TO '/app/measurements.csv'"
 echo "Taring all backups together"
 tar cvf backup.tar *.bak *.csv
 
