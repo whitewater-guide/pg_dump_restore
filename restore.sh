@@ -26,6 +26,7 @@ echo "Restored wwguide database"
 
 
 echo "Restoring gorge database..."
+psql  -h db -U postgres -d gorge  -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
 psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
 pg_restore -h db -U postgres -d wwguide -Fc gorge.bak
 psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
