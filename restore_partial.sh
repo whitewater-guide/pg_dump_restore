@@ -12,10 +12,10 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER"
 
 echo "Finding latest backup"
-LATEST_BACKUP=$(aws s3 ls s3://$S3_BUCKET/$S3_PREFIX/ | grep partial | sort | tail -n 1 | awk '{ print $4 }')
+LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "production/partial" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
 
 echo "Fetching ${LATEST_BACKUP} from S3"
-aws s3 cp s3://$S3_BUCKET/$S3_PREFIX/${LATEST_BACKUP} partial.tar
+aws s3 cp s3://$S3_BUCKET/$LATEST_BACKUP partial.tar
 
 echo "Extracting backup contents"
 tar -xvf partial.tar
