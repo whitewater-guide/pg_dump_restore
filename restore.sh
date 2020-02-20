@@ -22,14 +22,14 @@ echo "Extracting backup contents"
 tar -xvf backup.tar
 
 echo "Restoring wwguide database..."
-pg_restore -h db -U postgres -d wwguide -Fc wwguide.bak
+pg_restore -h db -U postgres -d wwguide -Fc wwguide.bak || true
 echo "Restored wwguide database"
 
 
 echo "Restoring gorge database..."
 psql  -h db -U postgres -d gorge  -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
 psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
-pg_restore -h db -U postgres -d wwguide -Fc gorge.bak
+pg_restore -h db -U postgres -d wwguide -Fc gorge.bak  || true
 psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
 echo "Restore complete"
 rm -rf *.bak *.csv *.tar

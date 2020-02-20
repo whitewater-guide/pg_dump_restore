@@ -21,11 +21,11 @@ echo "Extracting backup contents"
 tar -xvf partial.tar
 
 echo "Restoring wwguide database..."
-pg_restore -h db -U postgres -d wwguide -Fc wwguide.bak
+pg_restore -h db -U postgres -d wwguide -Fc wwguide.bak  || true
 echo "Restored wwguide database"
 
 echo "Restoring gorge database..."
-pg_restore -h db -U postgres -d wwguide -Fc --clean --create gorge_schema.bak
+pg_restore -h db -U postgres -d wwguide -Fc --clean --create gorge_schema.bak  || true
 psql --username "$POSTGRES_USER" -d gorge -c "INSERT INTO schema_migrations (version, dirty) VALUES (1, false);"
 psql --username "$POSTGRES_USER" -d gorge -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
 psql --username "$POSTGRES_USER" -d gorge -c "SELECT create_hypertable('measurements', 'timestamp');"
