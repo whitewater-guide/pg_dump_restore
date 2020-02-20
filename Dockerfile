@@ -14,6 +14,6 @@ RUN apk update && \
     apk del curl py2-pip && \
     rm -rf /var/cache/apk/*
 
-COPY backup.sh restore.sh run.sh backup_partial.sh ./
+COPY backup.sh restore.sh run.sh backup_partial.sh restore_partial.sh ./
 
 ENTRYPOINT ["/app/run.sh"]

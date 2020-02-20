@@ -1,1 +1,1 @@
-This docker image is used to backup and restore wghitewater.guide databases
+This docker image is used to backup and restore whitewater.guide databases

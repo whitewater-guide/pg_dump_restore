@@ -24,12 +24,12 @@ echo "Restoring wwguide database..."
 pg_restore -h db -U postgres -d wwguide -Fc wwguide.bak
 echo "Restored wwguide database"
 
-
 echo "Restoring gorge database..."
-psql  -h db -U postgres -d gorge  -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
-psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
-pg_restore -h db -U postgres -d wwguide -Fc gorge.bak
-psql  -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
+pg_restore -h db -U postgres -d wwguide -Fc --clean --create gorge_schema.bak
+psql --username "$POSTGRES_USER" -d gorge -c "INSERT INTO schema_migrations (version, dirty) VALUES (1, false);"
+psql --username "$POSTGRES_USER" -d gorge -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
+psql --username "$POSTGRES_USER" -d gorge -c "SELECT create_hypertable('measurements', 'timestamp');"
+psql --username "$POSTGRES_USER" -d gorge -c "\copy measurements FROM '/app/measurements.csv'"
 echo "Restore complete"
 rm -rf *.bak *.csv *.tar
 echo "Deleted current backups"
