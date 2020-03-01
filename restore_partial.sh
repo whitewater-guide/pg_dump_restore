@@ -30,7 +30,7 @@ echo "Restored wwguide database"
 echo "Restoring gorge database..."
 psql -h db -U postgres -d gorge -c "REVOKE CONNECT ON DATABASE gorge FROM public;"
 psql -h db -U postgres -d gorge -c "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();"
-pg_restore -h db -U postgres -d wwguide -Fc --clean --create gorge_schema.bak  || true
+pg_restore -h db -U postgres -d gorge -Fc --clean --create gorge_schema.bak  || true
 psql -h db -U postgres -d gorge -c "INSERT INTO schema_migrations (version, dirty) VALUES (1, false);"
 psql -h db -U postgres -d gorge -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
 psql -h db -U postgres -d gorge -c "SELECT create_hypertable('measurements', 'timestamp');"

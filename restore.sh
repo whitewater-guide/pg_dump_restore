@@ -12,7 +12,6 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER"
 
 echo "Finding latest backup"
-LATEST_BACKUP=$(aws s3 ls s3://$S3_BUCKET/$S3_PREFIX/ | sort | tail -n 1 | awk '{ print $4 }')
 LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "production/backup" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
 
 echo "Fetching ${LATEST_BACKUP} from S3"
@@ -34,7 +33,7 @@ psql -h db -U postgres -d gorge -c "REVOKE CONNECT ON DATABASE gorge FROM public
 psql -h db -U postgres -d gorge -c "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();"
 psql -h db -U postgres -d gorge  -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
 psql -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
-pg_restore -h db -U postgres -d wwguide -Fc gorge.bak  || true
+pg_restore -h db -U postgres -d gorge -Fc gorge.bak  || true
 psql -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
 psql -h db -U postgres -d gorge -c "GRANT CONNECT ON DATABASE gorge TO public;"
 echo "Restore complete"
