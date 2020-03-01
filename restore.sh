@@ -25,7 +25,7 @@ psql -h db -U postgres -d wwguide -c "REVOKE CONNECT ON DATABASE wwguide FROM pu
 psql -h db -U postgres -d wwguide -c "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();"
 pg_restore -h db -U postgres -d wwguide -Fc --clean --create wwguide.bak  || true
 psql -h db -U postgres -d wwguide -c "GRANT CONNECT ON DATABASE wwguide TO public;"
-echo "Restored wwguide database"
+echo "Restored wwguide database from ${LATEST_BACKUP}"
 
 
 echo "Restoring gorge database..."
@@ -36,6 +36,6 @@ psql -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
 pg_restore -h db -U postgres -d gorge -Fc gorge.bak  || true
 psql -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
 psql -h db -U postgres -d gorge -c "GRANT CONNECT ON DATABASE gorge TO public;"
-echo "Restore complete"
+echo "Restore complete from ${LATEST_BACKUP}"
 rm -rf *.bak *.csv *.tar
 echo "Deleted current backups"
