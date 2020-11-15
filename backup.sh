@@ -14,7 +14,7 @@ echo "Deleting older backups"
 rm -rf *.bak *.csv *.tar
 
 echo "Creating dump of wwguide database..."
-pg_dump -h db -U postgres -Fc --schema public -f wwguide.bak wwguide
+pg_dump -h db -U postgres -Fc --exclude-schema '*timescale*' -f wwguide.bak wwguide
 
 echo "Creating dump of gorge database..."
 pg_dump -h db -U postgres -Fc -f gorge.bak gorge
