@@ -13,6 +13,10 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Cache docker layers
+        uses: satackey/action-docker-layer-caching@v0.0.8
+        continue-on-error: true
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
