@@ -12,6 +12,9 @@ RUN apk update && \
     apk del curl && \
     rm -rf /var/cache/apk/*
 
+# check installation
+RUN aws --version
+
 COPY backup.sh restore.sh run.sh backup_partial.sh restore_partial.sh ./
 
 ENTRYPOINT ["/app/run.sh"]
