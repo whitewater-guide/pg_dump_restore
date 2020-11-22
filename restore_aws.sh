@@ -5,11 +5,8 @@
 set -e
 set -o pipefail
 
-echo "Finding latest backup"
-LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "production/backup" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
-
-echo "Fetching ${LATEST_BACKUP} from S3"
-aws s3 cp s3://$S3_BUCKET/$LATEST_BACKUP backup.tar
+echo "Fetching ${BACKUP_URL}"
+curl ${BACKUP_URL} -o backup.tar
 
 echo "Extracting backup contents"
 tar -xvf backup.tar

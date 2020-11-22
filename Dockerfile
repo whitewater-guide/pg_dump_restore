@@ -9,7 +9,6 @@ RUN apk update && \
     curl -L --insecure https://github.com/odise/go-cron/releases/download/v0.0.6/go-cron-linux.gz | zcat > /usr/local/bin/go-cron && \
     chmod u+x /usr/local/bin/go-cron && \
     # cleanup
-    apk del curl && \
     rm -rf /var/cache/apk/*
 
 # check installation
