@@ -15,6 +15,6 @@ RUN apk update && \
 # check installation
 RUN aws --version
 
-COPY backup.sh restore.sh run.sh backup_partial.sh restore_partial.sh ./
+COPY ./*.sh ./
 
 ENTRYPOINT ["/app/run.sh"]

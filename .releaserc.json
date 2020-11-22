@@ -7,8 +7,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "./build.sh",
-        "publishCmd": "./publish.sh ${nextRelease.version}"
+        "prepareCmd": "./scripts/build.sh",
+        "publishCmd": "./scripts/publish.sh ${nextRelease.version}"
       }
     ],
     "@semantic-release/github"
