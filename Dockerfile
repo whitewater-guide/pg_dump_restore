@@ -1,4 +1,4 @@
-FROM postgres:11.6-alpine
+FROM postgres:12.4-alpine
 
 WORKDIR /app
 
