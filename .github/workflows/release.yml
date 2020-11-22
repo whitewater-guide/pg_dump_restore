@@ -40,5 +40,6 @@ jobs:
         # - On pull requests build phase doesn't run, but test phase does
       - name: Release
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CR_PAT: ${{ secrets.CR_PAT }}
         run: yarn semantic-release
