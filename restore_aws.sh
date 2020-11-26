@@ -16,7 +16,7 @@ pg_restore -d wwguide -Fc --schema public wwguide.bak || true
 echo "Restored wwguide"
 
 echo "Restoring gorge database..."
-pg_restore -d gorge -Fc --table measurements --table jobs gorge.bak || true
+pg_restore -d gorge -Fc --table measurements --table jobs --table schema_migrations gorge.bak || true
 echo "Restored gorge"
 rm -rf *.bak *.csv *.tar
 echo "Deleted current backups"
