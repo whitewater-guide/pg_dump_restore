@@ -12,12 +12,15 @@ echo "Extracting backup contents"
 tar -xzvf backup.tar.gz
 
 echo "Restoring wwguide database..."
-pg_restore -d wwguide -Fc --clean --schema public wwguide.bak || true
+pg_restore -d wwguide -Fc --clean --disable-triggers --schema public wwguide.bak || true
 echo "Restored wwguide"
 
-echo "Restoring gorge database..."
-psql -d gorge -c "\copy measurements FROM '/app/measurements.csv'"
-echo "Restored gorge"
+if test -z "$SKIP_GORGE" 
+then
+    echo "Restoring gorge database..."
+    psql -d gorge -c "\copy measurements FROM '/app/measurements.csv'"
+    echo "Restored gorge"
+fi
 
 rm -rf *.bak *.csv *.tar *.tar.gz
 echo "Deleted current backups"

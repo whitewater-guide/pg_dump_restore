@@ -16,7 +16,7 @@ rm -rf *.bak *.csv *.tar
 echo "Creating dump of wwguide database..."
 pg_dump -h db -U postgres -Fc --no-owner --data-only --exclude-schema '*timescale*' -f wwguide.bak wwguide
 
-echo "Creating one-day measurements dump of gorge database..."
+echo "Creating measurements dump of gorge database..."
 psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements) TO '/app/measurements.csv'"
 
 echo "Taring all backups together"
