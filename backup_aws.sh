@@ -17,7 +17,7 @@ echo "Creating dump of wwguide database..."
 pg_dump -h db -U postgres -Fc --no-owner --data-only --exclude-schema '*timescale*' -f wwguide.bak wwguide
 
 echo "Creating dump of gorge database..."
-pg_dump -h db -U postgres -Fc --no-owner --data-only --table measurements -f gorge.bak gorge
+pg_dump -h db -U postgres -Fc --no-owner --data-only --exclude-schema '*timescale*' -f gorge.bak gorge
 
 echo "Taring all backups together"
 tar cvf backup.tar *.bak
