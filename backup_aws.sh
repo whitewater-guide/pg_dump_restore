@@ -14,7 +14,7 @@ echo "Deleting older backups"
 rm -rf *.bak *.csv *.tar
 
 echo "Creating dump of wwguide database..."
-pg_dump -h db -U postgres -Fc --no-owner -schema public -f wwguide.bak wwguide
+pg_dump -h db -U postgres -Fc --no-owner --schema public -f wwguide.bak wwguide
 
 echo "Creating measurements dump of gorge database..."
 psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements) TO '/app/measurements.csv'"
