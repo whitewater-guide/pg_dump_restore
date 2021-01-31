@@ -12,7 +12,7 @@ echo "Extracting backup contents"
 tar -xzvf backup.tar.gz
 
 echo "Restoring wwguide database..."
-pg_restore -d wwguide -Fc --clean --schema public wwguide.bak || true
+pg_restore -d wwguide -Fc --clean wwguide.bak || true
 echo "Restored wwguide"
 
 if test -z "$SKIP_GORGE" 
