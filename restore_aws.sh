@@ -6,17 +6,18 @@ set -e
 set -o pipefail
 
 echo "Fetching ${BACKUP_URL}"
-curl ${BACKUP_URL} -o backup.tar
+curl ${BACKUP_URL} -o backup.tar.gz
 
 echo "Extracting backup contents"
-tar -xvf backup.tar
+tar -xzvf backup.tar.gz
 
 echo "Restoring wwguide database..."
 pg_restore -d wwguide -Fc --clean --schema public wwguide.bak || true
 echo "Restored wwguide"
 
 echo "Restoring gorge database..."
-pg_restore -d gorge -Fc --clean --table measurements --table jobs --table schema_migrations gorge.bak || true
+psql -d gorge -c "\copy measurements FROM '/app/measurements.csv'"
 echo "Restored gorge"
-rm -rf *.bak *.csv *.tar
+
+rm -rf *.bak *.csv *.tar *.tar.gz
 echo "Deleted current backups"

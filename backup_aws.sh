@@ -16,15 +16,15 @@ rm -rf *.bak *.csv *.tar
 echo "Creating dump of wwguide database..."
 pg_dump -h db -U postgres -Fc --no-owner --data-only --exclude-schema '*timescale*' -f wwguide.bak wwguide
 
-echo "Creating dump of gorge database..."
-pg_dump -h db -U postgres -Fc --no-owner --data-only --exclude-schema '*timescale*' -f gorge.bak gorge
+echo "Creating one-day measurements dump of gorge database..."
+psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements) TO '/app/measurements.csv'"
 
 echo "Taring all backups together"
-tar cvf backup.tar *.bak
+tar czvf backup.tar.gz *.bak *.csv
 
 echo "Uploading dump to $S3_BUCKET"
-cat backup.tar | aws s3 cp - s3://$S3_BUCKET/$S3_PREFIX/4aws_$(date +"%Y-%m-%dT%H:%M:%SZ").tar || exit 2
+cat backup.tar.gz | aws s3 cp - s3://$S3_BUCKET/$S3_PREFIX/4aws_$(date +"%Y-%m-%dT%H:%M:%SZ").tar.gz || exit 2
 echo "SQL backup uploaded successfully"
 
 echo "Deleting current backups"
-rm -rf *.bak *.csv *.tar
+rm -rf *.bak *.csv *.tar *.tar.gz
