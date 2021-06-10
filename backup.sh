@@ -14,13 +14,13 @@ echo "Deleting older backups"
 rm -rf *.bak *.csv *.tar *.tar.gz
 
 echo "Creating dump of wwguide database..."
-pg_dump -h db -U postgres -Fc --no-owner -f wwguide.bak wwguide
+pg_dump -Fc --no-owner -f wwguide.bak wwguide
 
 echo "Creating dump of gorge database..."
-pg_dump -h db -U postgres -Fc --no-owner -f gorge.bak gorge
+pg_dump -Fc --no-owner -f gorge.bak gorge
 
 echo "Creating one-week measurements dump of gorge database..."
-psql --host db --username postgres --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp > NOW() - INTERVAL '7 DAY') TO '/app/measurements.csv'"
+psql --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp > NOW() - INTERVAL '7 DAY') TO '/app/measurements.csv'"
 
 echo "Taring all backups together"
 tar czvf backup.tar.gz *.bak *.csv
