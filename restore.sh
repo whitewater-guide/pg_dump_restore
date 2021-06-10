@@ -11,32 +11,25 @@ export AWS_DEFAULT_REGION=$S3_REGION
 export PGPASSWORD=$POSTGRES_PASSWORD
 
 echo "Finding latest backup"
-LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "production/backup" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
+LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "$S3_BUCKET" --prefix "$S3_PREFIX/backup" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
 
 echo "Fetching ${LATEST_BACKUP} from S3"
 aws s3 cp s3://$S3_BUCKET/$LATEST_BACKUP backup.tar
 
 echo "Extracting backup contents"
-tar -xvf backup.tar
+tar -xzvf backup.tar.gz
 
 echo "Restoring wwguide database..."
-# When --create option is used, the database named with -d is used only to issue the initial DROP DATABASE and CREATE DATABASE commands. 
-# All data is restored into the database name that appears in the archive.
-psql -h db -U postgres -d postgres -c "REVOKE CONNECT ON DATABASE wwguide FROM public;"
-psql -h db -U postgres -d postgres -c "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'wwguide';"
-pg_restore -h db -U postgres -d postgres -Fc --clean --create wwguide.bak  || true
-psql -h db -U postgres -d postgres -c "GRANT CONNECT ON DATABASE wwguide TO public;"
-echo "Restored wwguide database from ${LATEST_BACKUP}"
+pg_restore -d wwguide -Fc --clean wwguide.bak || true
+echo "Restored wwguide"
 
+if test -z "$SKIP_GORGE" 
+then
+    echo "Restoring gorge database..."
+    # psql -d gorge -c "\copy measurements FROM '/app/measurements.csv'"
+    pg_restore -d gorge -Fc --clean gorge.bak || true
+    echo "Restored gorge"
+fi
 
-echo "Restoring gorge database..."
-psql -h db -U postgres -d postgres -c "REVOKE CONNECT ON DATABASE gorge FROM public;"
-psql -h db -U postgres -d postgres -c "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'gorge';"
-psql -h db -U postgres -d gorge  -c "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
-psql -h db -U postgres -d gorge  -c "SELECT timescaledb_pre_restore();"
-pg_restore -h db -U postgres -d gorge -Fc gorge.bak  || true
-psql -h db -U postgres -d gorge  -c "SELECT timescaledb_post_restore();"
-psql -h db -U postgres -d postgres -c "GRANT CONNECT ON DATABASE gorge TO public;"
-echo "Restore complete from ${LATEST_BACKUP}"
-rm -rf *.bak *.csv *.tar
+rm -rf *.bak *.csv *.tar *.tar.gz
 echo "Deleted current backups"
