@@ -45,5 +45,6 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # This is CR_PAT of ww-github user
           CR_PAT: ${{ secrets.CR_PAT }}
         run: yarn semantic-release
