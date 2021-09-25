@@ -7,7 +7,7 @@
     "url": "git+https://github.com/whitewater-guide/pg_dump_restore.git"
   },
   "author": "ww-github <info@whitewater.guide>",
-  "license": "The Unlicense",
+  "license": "Unlicense",
   "bugs": {
     "url": "https://github.com/whitewater-guide/pg_dump_restore/issues"
   },
