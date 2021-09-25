@@ -16,32 +16,33 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
         with:
-          node-version: "14"
-          cache: "yarn"
+          registry: ghcr.io
+          username: ${{ env.GITHUB_USER }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Semantic Release
+        id: semantic # Need an `id` for output variables
+        uses: cycjimmy/semantic-release-action@v2
+        extra_plugins: |
+          @semantic-release/exec
+          @semantic-release/git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CR_PAT: ${{ secrets.CR_PAT }}
 
-      - name: Build docker image
+      - name: Build and push docker image
+        id: docker_build
         uses: docker/build-push-action@v2
         with:
-          tags: ghcr.io/whitewater-guide/pg_dump_restore:latest
+          push: true
+          tags: |
+            ghcr.io/${{ env.GITHUB_REPOSITORY }}:latest
+            ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ steps.semantic.outputs.new_release_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-
-        # Semantic-release is configured in a way that it'll fail prepare step when event is not 'push'
-        # This ensures that:
-        # - When commit-analyzer says that no release should be made, then test and build phase do not run
-        # - On pull requests build phase doesn't run, but test phase does
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # This is CR_PAT of ww-github user
-          CR_PAT: ${{ secrets.CR_PAT }}
-        run: yarn semantic-release
