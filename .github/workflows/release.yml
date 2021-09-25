@@ -26,9 +26,10 @@ jobs:
       - name: Semantic Release
         id: semantic # Need an `id` for output variables
         uses: cycjimmy/semantic-release-action@v2
-        extra_plugins: |
-          @semantic-release/exec
-          @semantic-release/git
+        with:
+          extra_plugins: |
+            @semantic-release/exec
+            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CR_PAT: ${{ secrets.CR_PAT }}
