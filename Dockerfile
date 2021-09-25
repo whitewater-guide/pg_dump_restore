@@ -2,6 +2,8 @@ FROM whitewaterguide/db-docker:1.0.5
 
 ARG AWS_VERSION=2.2.41
 
+ENV S3_PREFIX="v3/"
+
 # Install build tools
 RUN apt-get update \
     && apt-get upgrade \
