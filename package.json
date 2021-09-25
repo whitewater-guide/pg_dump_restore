@@ -14,6 +14,7 @@
   "homepage": "https://github.com/whitewater-guide/pg_dump_restore#readme",
   "main": "",
   "scripts": {
+    "build": "./scripts/build.sh",
     "semantic-release": "semantic-release"
   },
   "devDependencies": {

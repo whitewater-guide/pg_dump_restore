@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 set -e
 set -o pipefail
@@ -6,7 +6,37 @@ set -o pipefail
 export PGPASSWORD=$POSTGRES_PASSWORD
 
 echo "Deleting older backups"
-rm -rf *.bak *.csv *.tar *.tar.gz
+rm -rf *.bak *.csv *.tar *.tar.gz ./partitions
+
+mkdir ./partitions
+
+# Dump old measurements partitions
+# https://github.com/pgpartman/pg_partman/blob/master/doc/pg_partman.md#scripts
+
+# First, with --nodrop to ensure that they're uploaded to s3
+echo "Dumping old measurements partitions with --nodrop"
+dump_partition.py \
+    --schema archive \
+    --connection "dbname=gorge host=$PGHOST user=$PGUSER password=$PGPASSWORD" \
+    --output ./partitions \
+    --nodrop \
+    --dump_database gorge
+
+echo "Uploading old measurements partitions to s3"
+aws s3 cp \
+    --storage-class STANDARD_IA \
+    --recursive \
+    ./partitions \
+    s3://$S3_BUCKET/partitions_$(date +"%Y-%m-%d")/
+
+# Second time we really drop them
+echo "Dumping and dropping old measurements partitions "
+dump_partition.py \
+    --schema archive \
+    --connection "dbname=gorge host=$PGHOST user=$PGUSER password=$PGPASSWORD" \
+    --output ./partitions \
+    --nohashfile \
+    --dump_database gorge
 
 echo "Creating dump of wwguide database..."
 pg_dump -Fc --no-owner --no-privileges --no-password -f wwguide.bak wwguide
@@ -24,8 +54,8 @@ echo "Taring all backups together"
 tar czvf backup.tar.gz *.bak *.csv
 
 echo "Uploading dump to $S3_BUCKET"
-cat backup.tar.gz | aws s3 cp - s3://$S3_BUCKET/backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar.gz || exit 2
+cat backup.tar.gz | aws s3 cp - s3://$S3_BUCKET/backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar.gz --storage-class STANDARD_IA || exit 2
 echo "SQL backup uploaded successfully"
 
 echo "Deleting current backups"
-rm -rf *.bak *.csv *.tar *.tar.gz
+rm -rf *.bak *.csv *.tar *.tar.gz ./partitions
