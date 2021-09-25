@@ -9,7 +9,7 @@ echo "Finding latest backup"
 LATEST_BACKUP=$(aws s3api list-objects-v2 --bucket "${S3_BUCKET}" --prefix "${S3_PREFIX}backup" --query 'reverse(sort_by(Contents, &LastModified))[:1].Key' --output=text)
 
 echo "Fetching ${LATEST_BACKUP} from S3"
-aws s3 cp s3://${S3_BUCKET}/${LATEST_BACKUP} backup.tar
+aws s3 cp s3://${S3_BUCKET}/${LATEST_BACKUP} backup.tar.gz
 
 echo "Extracting backup contents"
 tar -xzvf backup.tar.gz
