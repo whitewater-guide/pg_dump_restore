@@ -5,16 +5,13 @@ on:
       - master
 env:
   GITHUB_USER: ww-github
+  REGISTRY: ghcr.io
 
 jobs:
   release:
     name: Release
 
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Check out
@@ -26,7 +23,7 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ env.GITHUB_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
