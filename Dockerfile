@@ -15,7 +15,7 @@ RUN apt-get update \
     python-dev \
     gcc \
     libpq-dev \
-    postgresql-server-dev-all
+    postgresql-server-dev-13
 
 # Install AWS CLI tools
 RUN cd /tmp \
@@ -37,7 +37,7 @@ RUN apt-get remove --purge -yy \
     python-dev \
     gcc \
     libpq-dev \
-    postgresql-server-dev-all \
+    postgresql-server-dev-13 \
     && rm -rf /var/lib/apt/lists/*
 
 # Check the installation
