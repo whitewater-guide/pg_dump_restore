@@ -14,6 +14,10 @@ aws s3 cp s3://${S3_BUCKET}/${LATEST_BACKUP} backup.tar.gz
 echo "Extracting backup contents"
 tar -xzvf backup.tar.gz
 
+echo "Restoring postgres database..."
+pg_restore -d postgres -Fc --clean postgres.bak || true
+echo "Restored postgres"
+
 echo "Restoring wwguide database..."
 pg_restore -d wwguide -Fc --clean wwguide.bak || true
 echo "Restored wwguide"

@@ -41,6 +41,10 @@ then
         --dump_database gorge
 fi
 
+# This is required because pg_cron uses postgres database
+echo "Creating dump of postgres database..."
+pg_dump -Fc --no-owner --no-privileges --no-password -f postgres.bak postgres
+
 echo "Creating dump of wwguide database..."
 pg_dump -Fc --no-owner --no-privileges --no-password -f wwguide.bak wwguide
 
