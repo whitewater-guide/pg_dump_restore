@@ -1,4 +1,4 @@
-FROM whitewaterguide/postgres:1.0.1
+FROM whitewaterguide/postgres:1.1.0
 
 ARG AWS_VERSION=2.2.41
 
