@@ -51,8 +51,8 @@ pg_dump -Fc --no-owner --no-privileges --no-password -f wwguide.bak wwguide
 echo "Creating dump of gorge database..."
 pg_dump -Fc --no-owner --no-privileges --no-password -f gorge.bak gorge
 
-echo "Creating dump of gorge database without data..."
-pg_dump -Fc --no-owner --no-privileges --no-password --schema-only --section pre-data --disable-triggers --table measurements --table jobs --table schema_migrations -f gorge_schema.bak gorge
+echo "Creating dump of gorge database without measurements..."
+pg_dump -Fc --no-owner --no-privileges --no-password --exclude-table-data '*measurements*' -f gorge_without_measurements.bak gorge
 
 echo "Creating one-week measurements dump of gorge database..."
 psql --no-password --dbname=gorge -c "\copy (SELECT * FROM measurements WHERE timestamp > NOW() - INTERVAL '7 DAY') TO '/app/measurements.csv'"
