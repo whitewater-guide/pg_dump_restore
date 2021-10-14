@@ -5,17 +5,22 @@ ARG AWS_VERSION=2.2.41
 ENV S3_PREFIX="v3/"
 
 # Install build tools
-RUN apt-get update \
-    && apt-get upgrade \
-    && apt-get install --no-install-recommends -yy \
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install --no-install-recommends -y \
     curl \
     unzip \
-    python \
-    python-pip \
-    python-dev \
+    python2 \
+    python2-dev \
+    python-is-python2 \
     gcc \
     libpq-dev \
     postgresql-server-dev-13
+
+# Install pip2
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
+    && python2 get-pip.py \
+    && rm get-pip.py
 
 # Install AWS CLI tools
 RUN cd /tmp \
@@ -31,10 +36,9 @@ RUN pip install -U pip \
     && pip install psycopg2
 
 # Remove build tools
-RUN apt-get remove --purge -yy \
+RUN apt-get remove --purge -y \
     unzip \
-    python-pip \
-    python-dev \
+    python2-dev \
     gcc \
     libpq-dev \
     postgresql-server-dev-13 \
@@ -42,7 +46,7 @@ RUN apt-get remove --purge -yy \
 
 # Check the installation
 RUN aws --version \
-    && python --version
+    && python2 --version
 
 WORKDIR /app
 
