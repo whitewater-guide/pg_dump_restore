@@ -17,7 +17,7 @@ RUN apt-get update -y \
     libpq-dev \
     postgresql-server-dev-13
 
-# Install pip2
+# Install pip2, since bullseye no longer provides it
 RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
     && python2 get-pip.py \
     && rm get-pip.py
