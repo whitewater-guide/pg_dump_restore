@@ -65,6 +65,7 @@ cat backup.tar.gz | aws s3 cp - s3://${S3_BUCKET}/${S3_PREFIX}backup_$(date +"%Y
 echo "[backup] SQL backup uploaded successfully"
 
 if test -z "${KEEP_BACKUP_FILES}" 
+then
     echo "[backup] Deleting current backups"
     rm -rf *.bak *.csv *.tar *.tar.gz ./partitions
 fi
