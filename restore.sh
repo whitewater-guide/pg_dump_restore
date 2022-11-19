@@ -33,6 +33,17 @@ else
     echo "[restore] wwguide backup not found"
 fi
 
+if test -z "${SKIP_SYNAPSE}" 
+then
+    if [ -f synapse.bak ]; then
+        echo "[restore] Restoring synapse database..."
+        pg_restore -d synapse -Fc --clean synapse.bak || true
+        echo "[restore] Restored synapse"
+    else
+        echo "[restore] synapse backup not found"
+    fi
+fi
+
 if test -z "${SKIP_GORGE}" 
 then
     if [ -f gorge.bak ]; then
