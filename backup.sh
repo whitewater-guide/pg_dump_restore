@@ -67,7 +67,7 @@ echo "[backup] Taring all backups together"
 tar czvf backup.tar.gz *.bak *.csv
 
 echo "[backup] Uploading dump to ${S3_BUCKET}"
-cat backup.tar.gz | aws s3 cp - s3://${S3_BUCKET}/${S3_PREFIX}backup_$(date +"%Y-%m-%dT%H:%M:%SZ").tar.gz --storage-class STANDARD_IA || exit 2
+cat backup.tar.gz | aws s3 cp - s3://${S3_BUCKET}/${S3_PREFIX}backup_$(date +"%Y-%m-%dT%H_%M_%SZ").tar.gz --storage-class STANDARD_IA || exit 2
 echo "[backup] SQL backup uploaded successfully"
 
 if test -z "${KEEP_BACKUP_FILES}" 
