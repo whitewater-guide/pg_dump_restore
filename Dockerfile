@@ -1,6 +1,6 @@
-FROM whitewaterguide/postgres:1.1.0
+FROM ghcr.io/whitewater-guide/postgres:2.0.0
 
-ARG AWS_VERSION=2.2.41
+ARG AWS_VERSION=2.34.24
 
 ENV S3_PREFIX="v3/"
 
@@ -10,17 +10,11 @@ RUN apt-get update -y \
     && apt-get install --no-install-recommends -y \
     curl \
     unzip \
-    python2 \
-    python2-dev \
-    python-is-python2 \
+    python3 \
+    python3-psycopg2 \
     gcc \
     libpq-dev \
-    postgresql-server-dev-13
-
-# Install pip2, since bullseye no longer provides it
-RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
-    && python2 get-pip.py \
-    && rm get-pip.py
+    postgresql-server-dev-18
 
 # Install AWS CLI tools
 RUN cd /tmp \
@@ -29,24 +23,18 @@ RUN cd /tmp \
     && ./aws/install \
     && rm -rf ./*
 
-# Install psycopg2 which is required for partmans scripts 
-RUN pip install -U pip \
-    && pip install --upgrade setuptools \
-    && pip install --upgrade wheel \
-    && pip install psycopg2
-
 # Remove build tools
 RUN apt-get remove --purge -y \
     unzip \
-    python2-dev \
     gcc \
     libpq-dev \
-    postgresql-server-dev-13 \
+    postgresql-server-dev-18 \
     && rm -rf /var/lib/apt/lists/*
 
 # Check the installation
 RUN aws --version \
-    && python2 --version
+    && python3 --version \
+    && python3 -c "import psycopg2; print('psycopg2', psycopg2.__version__)"
 
 WORKDIR /app
 

@@ -25,3 +25,10 @@ Available via https://github.com/orgs/whitewater-guide/packages/container/packag
 - `SKIP_GORGE` - if set, won't restore gorge database
 - `SKIP_SYNAPSE` - if set, won't restore synapse database
 - `SKIP_DOWNLOAD` - if set, won't download dump from s3 and will use local files created by backup script
+
+## Package versions
+
+- PostgreSQL (pg_dump/pg_restore): 18.3
+- Python: 3.13.5
+- psycopg2: 2.9.10
+- aws-cli: 2.34.24
