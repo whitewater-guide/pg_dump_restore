@@ -12,6 +12,7 @@ RUN apt-get update -y \
     unzip \
     python3 \
     python3-psycopg2 \
+    python-is-python3 \
     gcc \
     libpq-dev \
     postgresql-server-dev-18
