@@ -33,11 +33,14 @@ else
     echo "[restore] wwguide backup not found"
 fi
 
-if test -z "${SKIP_SYNAPSE}" 
+if test -z "${SKIP_SYNAPSE}"
 then
     if [ -f synapse.bak ]; then
+        echo "[restore] Recreating synapse database with LC_COLLATE=C (required by Synapse)..."
+        psql -d postgres --no-password -c "DROP DATABASE IF EXISTS synapse;"
+        psql -d postgres --no-password -c "CREATE DATABASE synapse WITH ENCODING='UTF8' LC_COLLATE='C' LC_CTYPE='C' TEMPLATE=template0;"
         echo "[restore] Restoring synapse database..."
-        pg_restore -d synapse -Fc --clean synapse.bak || true
+        pg_restore -d synapse -Fc synapse.bak || true
         echo "[restore] Restored synapse"
     else
         echo "[restore] synapse backup not found"
